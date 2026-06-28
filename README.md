@@ -1,12 +1,12 @@
-# Retail Data Warehouse — ETL Pipeline (MySQL)
+# Retail Data Warehouse - ETL Pipeline (MySQL)
 
-Pipeline ETL en trois couches — staging, modèle en étoile, marts analytiques — appliqué aux données de vente retail multi-magasins. Implémente une dimension client en **SCD Type 2** réellement fonctionnelle (historique des changements de ville), orchestré par un script Python qui exécute les étapes dans l'ordre avec logs et mesure de temps. Validé par une suite de 18 tests qui vérifient la cohérence financière entre les couches, pas seulement l'absence d'erreur SQL.
+Pipeline ETL en trois couches - staging, modèle en étoile, marts analytiques — appliqué aux données de vente retail multi-magasins. Implémente une dimension client en **SCD Type 2** réellement fonctionnelle (historique des changements de ville), orchestré par un script Python qui exécute les étapes dans l'ordre avec logs et mesure de temps. Validé par une suite de 18 tests qui vérifient la cohérence financière entre les couches, pas seulement l'absence d'erreur SQL.
 
 ---
 
 ## Pourquoi ce projet
 
-Savoir écrire des requêtes analytiques ne suffit pas à démontrer une compétence en ingénierie de données : il faut aussi savoir **organiser l'architecture** qui rend ces requêtes rapides, fiables et historisées. Ce projet répond à la même question métier qu'un projet d'analyse directe ("quel est notre chiffre d'affaires par magasin") mais avec une architecture en couches typique d'un environnement d'entreprise — exactement le type de structure utilisée sur Databricks, Onyxia ou un data warehouse Snowflake/BigQuery.
+Savoir écrire des requêtes analytiques ne suffit pas à démontrer une compétence en ingénierie de données : il faut aussi savoir **organiser l'architecture** qui rend ces requêtes rapides, fiables et historisées. Ce projet répond à la même question métier qu'un projet d'analyse directe ("quel est notre chiffre d'affaires par magasin") mais avec une architecture en couches typique d'un environnement d'entreprise - exactement le type de structure utilisée sur Databricks, Onyxia ou un data warehouse Snowflake/BigQuery.
 
 ---
 
@@ -38,12 +38,12 @@ retail-dw/
 ├── 00_source_schema.sql            # Schéma de la base source (OLTP) — réutilisé du projet retail-analytics
 ├── 00_source_seed_data.sql         # Données source (909 commandes, 2258 lignes)
 ├── 01_staging_schema.sql           # 8 tables de staging avec colonnes de traçabilité
-├── 02_etl_extract_to_staging.sql   # EXTRACT — source vers staging
+├── 02_etl_extract_to_staging.sql   # EXTRACT - source vers staging
 ├── 03_star_schema_ddl.sql          # 5 dimensions + 1 table de faits, avec clés étrangères
-├── 04_etl_transform_load.sql       # TRANSFORM & LOAD — staging vers star schema
+├── 04_etl_transform_load.sql       # TRANSFORM & LOAD - staging vers star schema
 ├── 05_etl_scd2_demo.sql            # Démonstration d'une mise à jour SCD2 réelle (changement de ville)
 ├── 06_marts_views.sql              # 5 vues analytiques construites sur le star schema
-├── run_pipeline.py                 # Orchestrateur — exécute les 8 étapes dans l'ordre, avec logs
+├── run_pipeline.py                 # Orchestrateur - exécute les 8 étapes dans l'ordre, avec logs
 ├── run_tests.sh                    # Suite de 18 tests de cohérence inter-couches
 └── README.md
 ```
@@ -52,7 +52,7 @@ retail-dw/
 
 ## Le mécanisme SCD Type 2 en détail
 
-La dimension `dim_customer` ne se contente pas d'écraser la valeur de ville à chaque mise à jour — elle conserve l'historique complet :
+La dimension `dim_customer` ne se contente pas d'écraser la valeur de ville à chaque mise à jour - elle conserve l'historique complet :
 
 ```sql
 -- Étape 1 : on ferme la version active
@@ -87,7 +87,7 @@ Sortie attendue :
 ```
 [00_source_schema] Create source OLTP database (retail_analytics)
   OK (0.25s)
-[02_extract] EXTRACT — source -> staging
+[02_extract] EXTRACT - source -> staging
   OK (0.05s)
 [04_transform_load] TRANSFORM & LOAD — staging -> star schema
   OK (6.63s)
@@ -151,7 +151,7 @@ SELECT * FROM mart_customer_geography ORDER BY total_revenue DESC;
 ## Notes techniques
 
 - `dim_date` est généré par une technique de *number generator* en SQL pur (sans table de séquence ni procédure stockée), produisant 366 lignes pour l'année bissextile 2024.
-- Le coût et la marge de chaque ligne de vente (`line_cost`, `line_margin`) sont calculés **au moment du chargement** à partir du `unit_cost` courant du produit — une vraie volumétrie de production gérerait ici un SCD2 sur `dim_product` également, simplifié ici pour rester focalisé sur la démonstration SCD2 côté client.
+- Le coût et la marge de chaque ligne de vente (`line_cost`, `line_margin`) sont calculés **au moment du chargement** à partir du `unit_cost` courant du produit - une vraie volumétrie de production gérerait ici un SCD2 sur `dim_product` également, simplifié ici pour rester focalisé sur la démonstration SCD2 côté client.
 - Le pipeline est idempotent par relance complète (chaque script commence par `DROP DATABASE IF EXISTS` au niveau staging), mais le script `05_etl_scd2_demo.sql` est conçu pour être un événement d'**incrémental load** : le rejouer une seconde fois créerait une troisième version, ce qui correspond exactement à un changement réel ultérieur du même client.
 
 ---
