@@ -1,6 +1,6 @@
 # Retail Data Warehouse - ETL Pipeline (MySQL)
 
-Pipeline ETL en trois couches - staging, modèle en étoile, marts analytiques — appliqué aux données de vente retail multi-magasins. Implémente une dimension client en **SCD Type 2** réellement fonctionnelle (historique des changements de ville), orchestré par un script Python qui exécute les étapes dans l'ordre avec logs et mesure de temps. Validé par une suite de 18 tests qui vérifient la cohérence financière entre les couches, pas seulement l'absence d'erreur SQL.
+Pipeline ETL en trois couches - staging, modèle en étoile, marts analytiques - appliqué aux données de vente retail multi-magasins. Implémente une dimension client en **SCD Type 2** réellement fonctionnelle (historique des changements de ville), orchestré par un script Python qui exécute les étapes dans l'ordre avec logs et mesure de temps. Validé par une suite de 18 tests qui vérifient la cohérence financière entre les couches, pas seulement l'absence d'erreur SQL.
 
 ---
 
